@@ -4,7 +4,7 @@ const path = require('path');
 const mime = require('mime-types');
 
 const server = http.createServer((req, res) => {
-let filePath = path. join(_dirname, 'public', req.url === '/' ? 'index.html' : req.url);
+    let filePath = path.join(__dirname, 'public', req.url === '/' ? 'index.html' : req.url);
 
     fs.readFile(filePath, (err, content) => {
         if (err) {
@@ -13,15 +13,15 @@ let filePath = path. join(_dirname, 'public', req.url === '/' ? 'index.html' : r
                 res.end('<h1>404 - File Not Found</h1>', 'utf8');
             } else {
                 res.writeHead(500);
-                res.end(`Server Error: ${err.code}` );
+                res.end(`Server Error: ${err.code}`, 'utf8');
             }
         } else {
-            res.writeHead(200, { 'Content-Type': mime.lookup(filePath) });
-            
+            const mimeType = mime.lookup(filePath) || 'application/octet-stream';  // Default to 'application/octet-stream' if MIME type is not found
+            res.writeHead(200, { 'Content-Type': mimeType });
             res.end(content, 'utf8');
         }
     });
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}` ));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
